@@ -10,10 +10,9 @@ using namespace std;
 
 int main()
 {
-
     srand(time(NULL));
     double x, y;
-    int tot = INFINITY;
+    int tot = 1000;
     int count0 = 0;
     for(int i = 0; i < tot; i++)
     {
