@@ -1,0 +1,17 @@
+# depslib dependency file v1.0
+1423550382 source:c:\users\11\desktop\mcs\main.cpp
+	<iostream>
+	<ctime>
+	<cstdlib>
+	<cstdio>
+	<algorithm>
+	<cstring>
+
+1423551091 source:c:\users\11\desktop\mcs solving reliability\main.cpp
+	<iostream>
+	<ctime>
+	<cstdlib>
+	<cstdio>
+	<algorithm>
+	<cstring>
+

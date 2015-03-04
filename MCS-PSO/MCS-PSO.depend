@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1425450491 source:c:\users\gs\documents\百度云同步盘\资料\任务\2015.01.27 mcs-pso\code\mcs-pso\mcs-pso.cpp
+	<iostream>
+	<ctime>
+	<cstdlib>
+	<cstdio>
+	<algorithm>
+	<cstring>
+	<cmath>
+

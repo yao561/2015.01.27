@@ -1,0 +1,25 @@
+# depslib dependency file v1.0
+1422864139 source:c:\users\gs\desktop\mcs-pso\main.cpp
+	<iostream>
+	<ctime>
+	<cstdlib>
+
+1422864971 source:c:\users\gs\desktop\mcs-pso\mcs求pi的值\main.cpp
+	<iostream>
+	<ctime>
+	<cstdlib>
+	<cstdio>
+
+1422935088 source:c:\users\gs\documents\百度云同步盘\资料\任务\2015.01.27 mcs-pso\code\mcs求pi的值\main.cpp
+	<iostream>
+	<ctime>
+	<cstdlib>
+	<cstdio>
+
+1423630892 source:g:\百度云同步盘\资料\任务\2015.01.27 mcs-pso\code\mcs求pi的值\main.cpp
+	<iostream>
+	<ctime>
+	<cstdlib>
+	<cstdio>
+	<sys/time.h>
+
