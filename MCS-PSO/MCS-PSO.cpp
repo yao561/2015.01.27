@@ -46,21 +46,21 @@ int r2[point_num*point_num];    //  r2[i*point_num+j]表示的是i与j两点之间的距离
 
 bool Floyd()    //  用Floyd方法判断r2这个数组代表的结构是否连通
 {
-    for(int i = 0; i < point_num; i++)
-        for(int j = 0; j < point_num; j++)
-            for(int k = 0; k < point_num; k++)
+    for(int k = 0; k < point_num; k++)
+        for(int i = 0; i < point_num; i++)
+            for(int j = 0; j < point_num; j++)
                 if(r2[i*point_num+j]>r2[i*point_num+k]+r2[k*point_num+j])
                 {
                     r2[i*point_num+j]=r2[i*point_num+k]+r2[k*point_num+j];
                     if(i==0&&j==5)
                         return true;
                 }
-    if(r2[0*point_num+point_num-1]<1000)
-        return true;
+    //if(r2[0*point_num+point_num-1]<1000)
+        //return true;
     return false;
 }
 
-double MCS(const double *r, int simulation_replication) //  输入每条边的稳定性和蒙特卡洛的迭代次数，输出整个结构的稳定
+double MCS(const double *r, int simulation_replication) //  输入每条边的稳定性和蒙特卡洛的迭代次数，输出整个结构的稳定性
 {
     int SUCCESS = 0;
     for(int i = 0; i < simulation_replication; i++)
@@ -245,7 +245,7 @@ void output()
 
     printf("Each dimension of gbest:\n");   //  找到的最好的粒子的每一维的取值
     for(int i=0; i<dim; i++)
-		printf("%g ",gbest[i]);
+		printf("%g ", gbest[i]);
 	printf("\n");
 }
 
