@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1426043660 source:c:\users\gs\documents\github\2015.01.27\mcs with normal pso\mcs with normal pso.cpp
+	<iostream>
+	<ctime>
+	<cstdlib>
+	<cstdio>
+	<algorithm>
+	<cstring>
+	<cmath>
+

@@ -10,7 +10,7 @@
 //下面是蒙特卡洛相关设置
 #define point_num 6 //  节点的数目
 #define Lambda 10
-#define M 1e6
+#define M 1000
 #define Rc 0.95 //  想要达到的整体结构的稳定性
 #define rc 0.8  //  每条边的稳定性的下界
 
@@ -125,71 +125,9 @@ double cost_sum(const double *r)  //  输入每条边的稳定性，输出总的cost
     return tot;
 }
 
-void heuristic()    //  用启发式方法产生第一个粒子
-{
-    for(int i = 0; i < dim; i++)
-        p[0][i] = rc;
-    double Rr1 = MCS(p[0], 5000);
-    while(Rr1 < Rc)
-    {
-        double R_temp[dim];
-        double Cost_temp[dim];
-        for(int i = 0; i < dim; i++)
-        {
-            double temp1 = p[0][i];
-            p[0][i] = 0.25 * (1 - p[0][i]) + p[0][i];
-            R_temp[i] = MCS(p[0], 5000);
-            Cost_temp[i] = cost_sum(p[0]);
-            p[0][i] = temp1;
-        }
-        int temp2 = 0;  //  用来记录这些值中大于Rc的个数
-        for(int i = 0; i < dim; i++)
-            if(R_temp[i] >= Rc)
-                temp2++;
-        int j;  //  STEP5中想要寻找的点
-        if(!temp2)  //  STEP5.1
-        {
-            double temp3 = 0;
-            for(int i = 0; i < dim; i++)
-            {
-                if(temp3 < R_temp[i])
-                {
-                    temp3 = R_temp[i];
-                    j = i;
-                }
-            }
-        }
-        else    //  STEP5.2
-        {
-            double temp3 = INFINITY;
-            for(int i = 0; i < dim; i++)
-            {
-                if(temp3 > Cost_temp[i] && R_temp[i] >= Rc)
-                {
-                    temp3 = Cost_temp[i];
-                    j = i;
-                }
-            }
-        }
-        double temp4 = p[0][j]; //  STEP5.3
-        for(int i = 0; i < dim; i++)
-            p[0][i] = 0.25 * (1 - temp4) + temp4;
-        Rr1 = MCS(p[0], 5000);
-    }
-
-    for(int i = 0; i < dim; i++)
-    {
-        pbest[0][i] = p[0][i];
-        v[0][i] = Vmin + (Vmax - Vmin) * 1.0 * rand() / RAND_MAX;
-    }
-    p_value[0] = cost_sum(p[0]);
-    pbest_value[0] = p_value[0];
-}
-
 void init()
 {
-    heuristic();
-    for(int i = 1; i < particle_num; i++)
+    for(int i = 0; i < particle_num; i++)
     {
         for(int j = 0; j < dim; j++)
 		{
