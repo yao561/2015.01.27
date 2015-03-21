@@ -10,8 +10,8 @@
 //下面是蒙特卡洛相关设置
 #define point_num 6 //  节点的数目
 #define Lambda 10
-#define M 1000
-#define Rc 0.95 //  想要达到的整体结构的稳定性
+#define M 1e4
+#define Rc 0.975 //  想要达到的整体结构的稳定性
 #define rc 0.8  //  每条边的稳定性的下界
 
 //下面是PSO相关设置
@@ -42,7 +42,7 @@ double gbest_value;
 double fitness[iteration];  //  用来记录每一轮的最佳适应值
 
 double r[dim];
-int r2[point_num*point_num];    //  r2[i*point_num+j]表示的是i与j两点之间的距离
+int r2[point_num][point_num];    //  r2[i][j]表示的是i与j两点之间的距离
 bool visited[point_num];
 int count1 = 0;
 
@@ -53,7 +53,7 @@ void DFS(int a)
         return;
     for(int i = 0; i < point_num; i++)
     {
-        if(visited[i] == false && r2[a*point_num+i])
+        if(visited[i] == false && r2[a][i])
             DFS(i);
     }
 }
@@ -72,36 +72,37 @@ double MCS(const double *r, int simulation_replication) //  输入每条边的稳定性和
     int SUCCESS = 0;
     for(int i = 0; i < simulation_replication; i++)
     {
-        for(int j = 0; j < point_num*point_num; j++)
-            r2[j] = 0;
+        for(int j = 0; j < point_num; j++)
+            for(int k = 0; k < point_num; k++)
+                r2[j][k] = 0;
         if(1.0*rand()/RAND_MAX < r[0])
-            r2[0*point_num+1] = 1;
+            r2[0][1] = 1;
         if(1.0*rand()/RAND_MAX < r[1])
-            r2[0*point_num+3] = 1;
+            r2[0][3] = 1;
         if(1.0*rand()/RAND_MAX < r[2])
-            r2[1*point_num+3] = 1;
+            r2[1][3] = 1;
         if(1.0*rand()/RAND_MAX < r[2])
-            r2[3*point_num+1] = 1;
+            r2[3][1] = 1;
         if(1.0*rand()/RAND_MAX < r[3])
-            r2[1*point_num+2] = 1;
+            r2[1][2] = 1;
         if(1.0*rand()/RAND_MAX < r[3])
-            r2[2*point_num+1] = 1;
+            r2[2][1] = 1;
         if(1.0*rand()/RAND_MAX < r[4])
-            r2[2*point_num+3] = 1;
+            r2[2][3] = 1;
         if(1.0*rand()/RAND_MAX < r[4])
-            r2[3*point_num+2] = 1;
+            r2[3][2] = 1;
         if(1.0*rand()/RAND_MAX < r[5])
-            r2[3*point_num+4] = 1;
+            r2[3][4] = 1;
         if(1.0*rand()/RAND_MAX < r[5])
-            r2[4*point_num+3] = 1;
+            r2[4][3] = 1;
         if(1.0*rand()/RAND_MAX < r[6])
-            r2[2*point_num+4] = 1;
+            r2[2][4] = 1;
         if(1.0*rand()/RAND_MAX < r[6])
-            r2[4*point_num+2] = 1;
+            r2[4][2] = 1;
         if(1.0*rand()/RAND_MAX < r[7])
-            r2[2*point_num+5] = 1;
+            r2[2][5] = 1;
         if(1.0*rand()/RAND_MAX < r[8])
-            r2[4*point_num+5] = 1;
+            r2[4][5] = 1;
 
         if(is_connected())
             SUCCESS++;
@@ -183,13 +184,13 @@ void renew_fitness()
 			pbest_value[i] = p_value[i];
 			for(int j = 0; j < dim; j++)
 				pbest[i][j]=p[i][j];
-			if(gbest_value > pbest_value[i])
-			{
-				gbest_value = pbest_value[i];
-				for(int j = 0; j < dim; j++)
-					gbest[j]=pbest[i][j];
-			}
 		}
+        if(gbest_value > pbest_value[i])
+        {
+            gbest_value = pbest_value[i];
+            for(int j = 0; j < dim; j++)
+               gbest[j]=pbest[i][j];
+        }
 	}
 	fitness[count1++] = gbest_value;
 }
