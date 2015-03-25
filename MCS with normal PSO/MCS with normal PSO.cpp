@@ -10,7 +10,7 @@
 //下面是蒙特卡洛相关设置
 #define point_num 6 //  节点的数目
 #define Lambda 10
-#define M 1e4
+#define M 1e6
 #define Rc 0.975 //  想要达到的整体结构的稳定性
 #define rc 0.8  //  每条边的稳定性的下界
 

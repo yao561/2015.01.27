@@ -10,8 +10,9 @@
 //下面是蒙特卡洛相关设置
 #define point_num 6 //  节点的数目
 #define Lambda 10
-#define M 1e4
-#define Rc 0.975 //  想要达到的整体结构的稳定性
+#define M 1e5
+#define M2 1e6
+#define Rc 0.925 //  想要达到的整体结构的稳定性
 #define rc 0.8  //  每条边的稳定性的下界
 
 //下面是PSO相关设置
@@ -129,26 +130,26 @@ double cost_sum(const double *r)  //  输入每条边的稳定性，输出总的cost
 void heuristic()    //  用启发式方法产生第一个粒子
 {
     for(int i = 0; i < dim; i++)
-        p[0][i] = rc;
-    double Rr1 = MCS(p[0], 5000);
+        p[0][i] = rc;           //STEP 1    //rc是下界
+    double Rr1 = MCS(p[0], M2); //STEP 2    //p[0]表示的第一个粒子通过M2次蒙特卡洛计算得到的系统稳定性
     while(Rr1 < Rc)
     {
-        double R_temp[dim];
-        double Cost_temp[dim];
+        double R_temp[dim];                 //用来记录STEP4.2中的系统稳定性
+        double Cost_temp[dim];              //记录与上面相对应的cost function
         for(int i = 0; i < dim; i++)
         {
             double temp1 = p[0][i];
             p[0][i] = 0.25 * (1 - p[0][i]) + p[0][i];
-            R_temp[i] = MCS(p[0], 5000);
+            R_temp[i] = MCS(p[0], M2);
             Cost_temp[i] = cost_sum(p[0]);
             p[0][i] = temp1;
         }
-        int temp2 = 0;  //  用来记录这些值中大于Rc的个数
+        int temp2 = 0;                      //用来记录这些值中 大于Rc的个数
         for(int i = 0; i < dim; i++)
             if(R_temp[i] >= Rc)
                 temp2++;
-        int j;  //  STEP5中想要寻找的点
-        if(!temp2)  //  STEP5.1
+        int j;                              //STEP5中想要寻找的点
+        if(!temp2)                          //STEP5.1
         {
             double temp3 = 0;
             for(int i = 0; i < dim; i++)
@@ -160,7 +161,7 @@ void heuristic()    //  用启发式方法产生第一个粒子
                 }
             }
         }
-        else    //  STEP5.2
+        else                                 //STEP5.2
         {
             double temp3 = INFINITY;
             for(int i = 0; i < dim; i++)
@@ -172,10 +173,10 @@ void heuristic()    //  用启发式方法产生第一个粒子
                 }
             }
         }
-        double temp4 = p[0][j]; //  STEP5.3
+        double temp4 = p[0][j];                //STEP5.3
         for(int i = 0; i < dim; i++)
             p[0][i] = 0.25 * (1 - temp4) + temp4;
-        Rr1 = MCS(p[0], 5000);
+        Rr1 = MCS(p[0], M2);
     }
 
     for(int i = 0; i < dim; i++)
