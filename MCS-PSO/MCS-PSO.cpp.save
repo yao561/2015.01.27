@@ -10,9 +10,9 @@
 //下面是蒙特卡洛相关设置
 #define point_num 6 //  节点的数目
 #define Lambda 10
-#define M 1e5
-#define M2 1e6
-#define Rc 0.925 //  想要达到的整体结构的稳定性
+#define M 1e6
+#define M2 5000
+#define Rc 0.95 //  想要达到的整体结构的稳定性
 #define rc 0.8  //  每条边的稳定性的下界
 
 //下面是PSO相关设置
@@ -25,7 +25,7 @@
 #define c1 0.8
 #define c2 0.8
 #define w 0.7
-#define iteration 100
+#define iteration 30
 
 using namespace std;
 
@@ -127,7 +127,7 @@ double cost_sum(const double *r)  //  输入每条边的稳定性，输出总的cost
     return tot;
 }
 
-void heuristic()    //  用启发式方法产生第一个粒子
+/*void heuristic()    //  用启发式方法产生第一个粒子
 {
     for(int i = 0; i < dim; i++)
         p[0][i] = rc;           //STEP 1    //rc是下界
@@ -186,12 +186,12 @@ void heuristic()    //  用启发式方法产生第一个粒子
     }
     p_value[0] = cost_sum(p[0]);
     pbest_value[0] = p_value[0];
-}
+}*/
 
 void init()
 {
-    heuristic();
-    for(int i = 1; i < particle_num; i++)
+    //heuristic();
+    for(int i = 0; i < particle_num; i++)
     {
         for(int j = 0; j < dim; j++)
 		{

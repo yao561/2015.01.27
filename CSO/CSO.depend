@@ -1,0 +1,11 @@
+# depslib dependency file v1.0
+1427273880 source:c:\users\gs\documents\github\new-2015.01.27\code\cso\main.cpp
+	<iostream>
+	<cstdlib>
+	<ctime>
+	<cstdio>
+	<algorithm>
+	<cstring>
+	<cmath>
+	<set>
+

@@ -1,0 +1,11 @@
+# depslib dependency file v1.0
+1427374923 source:c:\users\gs\documents\github\new-2015.01.27\code\mcs-de 120\main.cpp
+	<iostream>
+	<fstream>
+	<cstdlib>
+	<ctime>
+	<cstdio>
+	<algorithm>
+	<cstring>
+	<cmath>
+

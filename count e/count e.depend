@@ -1,0 +1,11 @@
+# depslib dependency file v1.0
+1426576637 source:c:\users\gs\documents\github\new-mcs-pso\count e\main.cpp
+	<iostream>
+	<fstream>
+	<cstdlib>
+	<ctime>
+	<cstdio>
+	<algorithm>
+	<cstring>
+	<cmath>
+
