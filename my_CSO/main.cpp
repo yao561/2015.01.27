@@ -7,14 +7,14 @@
 #include <cmath>
 #include <set>
 
-#define particle_num 20
-#define dim 30
+#define particle_num 100
+#define dim 100
 #define xmax 100
 #define xmin -100
-#define vmax 20
-#define vmin -20
-#define iteration 1000
-#define Phi 0.3
+//#define vmax 20
+//#define vmin -20
+#define iteration 100*50
+#define Phi 0.8
 
 using namespace std;
 
@@ -61,7 +61,8 @@ void init()
         for(int j = 0; j < dim; j++)
         {
             x[i][j] = xmin + (xmax - xmin) * 1.0 * rand() / RAND_MAX;
-            v[i][j] = vmin + (vmax - vmin) * 1.0 * rand() / RAND_MAX;
+            //v[i][j] = vmin + (vmax - vmin) * 1.0 * rand() / RAND_MAX;
+            v[i][j] = 0;
         }
     }
     calculate();
@@ -86,7 +87,7 @@ void pairpair()//把粒子们随机排序，然后放到paired[]数组里面
 
 void update()
 {
-    for(int i = 0; i < particle_num-1; i += 2)
+    for(int i = 0; i < particle_num; i += 2)
     {
         int winer, loser;
         if(x_value[paired[i]] < x_value[paired[i+1]])
@@ -107,8 +108,8 @@ void update()
             v[loser][j] = r1 * v[loser][j]
                         + r2 * (x[winer][j] - x[loser][j])
                         + Phi * r3 * (x_mean[j] - x[loser][j]);
-            v[loser][j] = v[loser][j] > vmax ? vmax : v[loser][j];
-            v[loser][j] = v[loser][j] < vmin ? vmin : v[loser][j];
+            //v[loser][j] = v[loser][j] > vmax ? vmax : v[loser][j];
+            //v[loser][j] = v[loser][j] < vmin ? vmin : v[loser][j];
             x[loser][j] += v[loser][j];
             x[loser][j] = x[loser][j] > xmax ? xmax : x[loser][j];
             x[loser][j] = x[loser][j] < xmin ? xmin : x[loser][j];
@@ -121,7 +122,8 @@ void output()
 {
     for(int i = 0; i < iteration; i++)
     {
-        cout << i << ' ' << fitness[i] << endl;
+        if(i%100==0)
+            cout << i << ' ' << fitness[i] << endl;
     }
     /*for(int i = particle_num-3; i < particle_num; i++)
     {

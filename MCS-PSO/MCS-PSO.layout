@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="MCS-PSO.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="-4" zoom_2="0">
+	<File name="MCS-PSO.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="-5" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="99" topLine="3" />
+			<Cursor1 position="3571" topLine="49" />
 		</Cursor>
+		<Folding>
+			<Collapse line="53" />
+			<Collapse line="64" />
+			<Collapse line="72" />
+			<Collapse line="130" />
+		</Folding>
 	</File>
 </CodeBlocks_layout_file>

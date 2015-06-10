@@ -10,22 +10,23 @@
 //下面是蒙特卡洛相关设置
 #define point_num 122 //  节点的数目
 #define Lambda 10
-#define M 100
-#define Rc 0.95 //  想要达到的整体结构的稳定性
+#define M 1000
+#define Rc 0.99 //  想要达到的整体结构的稳定性
 #define rc 0.8  //  每条边的稳定性的下界
 
 //下面是DE相关设置
 #define particle_num 300 //  粒子的数目
 #define dim 183 //粒子的维度
 #define xmax 1
-#define xmin 0.8
-#define CR 0.7
-#define F 0.5
-#define iteration 30
+#define xmin rc
+#define CR 0.9
+#define F 0.2
+#define iteration 100
 
 
 
 using namespace std;
+ofstream out;
 
 const double Alpha[] = {120, 120, 90, 100, 65, 100, 90, 160, 160,
                         120, 120, 90, 100, 65, 100, 90, 160, 160,
@@ -74,15 +75,18 @@ double x[particle_num][dim];
 double v[particle_num][dim];
 double u[particle_num][dim];
 double gbest[dim];
-double gbest_value = 10e20;
-double fitness[iteration];  //  用来记录每一轮的最佳适应值
+double x_fitness[particle_num]; //每个粒子当前的适应值，记录以避免重复计算
+
+
 
 double r[dim];
 int original_r[point_num][point_num];  //  表示原始的连通图
 int r2[point_num][point_num];    //  r2[i][j]用1表示i,j两点连通的，用0表示不连通
 bool visited[point_num];
 
-int count1 = 0;
+int cur_interation;
+double gbest_value;
+
 
 void DFS(int a)
 {
@@ -95,8 +99,6 @@ void DFS(int a)
             DFS(i);
     }
 }
-
-
 bool is_connected()
 {
     memset(visited, false, sizeof(visited));
@@ -105,8 +107,6 @@ bool is_connected()
         return true;
     return false;
 }
-
-
 double MCS(const double *r, int simulation_replication) //  输入每条边的稳定性和蒙特卡洛的迭代次数，输出整个结构的稳定性
 {
     int SUCCESS = 0;
@@ -127,12 +127,10 @@ double MCS(const double *r, int simulation_replication) //  输入每条边的稳定性和
     }
     return (double)SUCCESS/simulation_replication;
 }
-
 double cost_function(double a, double b, double c)
 {
     return a-b*log(1-c);
 }
-
 double cost_sum(const double *r)  //  输入每条边的稳定性，输出总的cost
 {
     double tot = 0;
@@ -143,91 +141,92 @@ double cost_sum(const double *r)  //  输入每条边的稳定性，输出总的cost
         tot *= pow((double)Rc/Rr, Lambda);
     return tot;
 }
-
-
 void init()
 {
+    cur_interation = 0;
     for(int i = 0; i < particle_num; i++)
         for(int j = 0; j < dim; j++)
             x[i][j] = xmin + (xmax - xmin) * 1.0 * rand() / RAND_MAX;
+    gbest_value = INFINITY;
     for(int i = 0; i < particle_num; i++)
     {
-        if(cost_sum(x[i]) < gbest_value)
+        x_fitness[i] = cost_sum(x[i]);
+        if(x_fitness[i] < gbest_value)
         {
-            gbest_value = cost_sum(x[i]);
+            gbest_value = x_fitness[i];
             for(int j = 0; j < dim; j++)
                 gbest[j] = x[i][j];
         }
     }
-    fitness[count1++] = gbest_value;
+    printf("%d\t%g\n", ++cur_interation, gbest_value);
+    out << cur_interation << "\t" << gbest_value << endl;
 }
 
-void process()
+void main_loop()
 {
     for(int i = 0; i < particle_num; i++)
     {
         int r1, r2, r3;
         do
         {
-        r1 = rand() % particle_num;
+        r1 = rand() * particle_num / RAND_MAX;
         } while(r1==i);
         do
         {
-        r2 = rand() % particle_num;
+        r2 = rand() * particle_num / RAND_MAX;
         } while( r2==i || r2==r1);
         do
         {
-        r3 = rand() % particle_num;
+        r3 = rand() * particle_num / RAND_MAX;
         } while( r3==i || r3==r1 || r3==r2 );
 
+        int J = rand() * dim / RAND_MAX;
         for(int j = 0; j < dim; j++)
         {
-            v[i][j] = x[r1][j] + F * (x[r2][j] - x[r3][j]);
-            if(v[i][j] > xmax)
-                v[i][j] = xmax;
-            if(v[i][j] < xmin)
-                v[i][j] = xmin;
-
-            if(1.0*rand()/RAND_MAX<=CR || j == rand()%dim)
-                u[i][j] = v[i][j];
+            if( 1.0*rand()/RAND_MAX<=CR || j==J )
+            {
+                u[i][j] = x[r1][j] + F * (x[r2][j] - x[r3][j]);
+                if(u[i][j] > xmax)
+                    u[i][j] = xmax;
+                else if(u[i][j] < xmin)
+                    u[i][j] = xmin;
+            }
             else
                 u[i][j] = x[i][j];
+            J = (J + 1) % dim;
         }
-    }
-}
 
-void select()
-{
-    for(int i = 0; i < particle_num; i++)
-    {
-        if(cost_sum(u[i]) < cost_sum(x[i]))
+
+
+        double score = cost_sum(u[i]);
+        if(score <= x_fitness[i])
+        {
             for(int j = 0; j < dim; j++)
             {
                 x[i][j] = u[i][j];
+
             }
-    }
-    double temp_best = 10e20;
-    for(int i = 0; i < particle_num; i++)
-    {
-        if(cost_sum(x[i]) < temp_best)
-        {
-            temp_best = cost_sum(x[i]);
-            if(temp_best < gbest_value)
-                gbest_value = temp_best;
-                for(int j = 0; j < dim; j++)
-                    gbest[j] = x[i][j];
+            x_fitness[i] = cost_sum(x[i]);
         }
     }
-    fitness[count1++] = gbest_value;
+    for(int i = 0; i < particle_num; i++)
+    {
+        if(x_fitness[i] < gbest_value)
+        {
+            gbest_value = x_fitness[i];
+            for(int j = 0; j < dim; j++)
+                gbest[j] = x[i][j];
+        }
+
+    }
+    printf("%d\t%g\n", ++cur_interation, gbest_value);
+    out << cur_interation << "\t" << gbest_value << endl;
 }
 
 void output()
 {
-    for(int i = 0; i < iteration; i++)  //  输出每一代的gbest的取值
-        printf("%d\t%g\n", i, fitness[i]);
-
     printf("Each dimension of gbest:\n");   //  找到的最好的粒子的每一维的取值
-    for(int i=0; i<dim; i++)
+    for(int i = 0; i < dim; i++)
 		printf("%g ", gbest[i]);
 	printf("\ngbest_value = %f\n", gbest_value);
 }
@@ -241,19 +240,24 @@ int main()
     ifstream in;
     in.open("j1201_1.txt");
     for (int i = 0; i < point_num; i++)
-    {
         for (int j = 0; j < point_num; j++)
-        {
             in >> original_r[i][j];
-        }
-    }
+    in.close();
 
-    init();
-    for(int i = 1; i < iteration; i++)
+
+
+    out.open("output0.99.txt");
+    out << Rc << endl;
+    for(int xunhuan = 0; xunhuan < 30; xunhuan++)
     {
-        process();
-        select();
+        init();
+        for(int i = 1; i < iteration; i++)
+        {
+            main_loop();
+        }
+        output();
+        out << gbest_value << endl << endl << endl;
     }
-    output();
+    out.close();
     return 0;
 }

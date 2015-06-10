@@ -12,7 +12,7 @@ int main()
 {
     srand(time(NULL));
     double x, y;
-    int tot = 100000;
+    int tot = 1e4;
     int count0 = 0;
     for(int i = 0; i < tot; i++)
     {

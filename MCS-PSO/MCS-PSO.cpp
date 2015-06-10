@@ -10,7 +10,7 @@
 //下面是蒙特卡洛相关设置
 #define point_num 6 //  节点的数目
 #define Lambda 10
-#define M 1e3
+#define M 10000
 //#define M2 5000
 #define Rc 0.99 //  想要达到的整体结构的稳定性
 #define rc 0.8  //  每条边的稳定性的下界
@@ -18,14 +18,14 @@
 //下面是PSO相关设置
 #define particle_num 15 //  粒子的数目
 #define dim 9   //  粒子的维度
-#define Vmax 1
-#define Vmin -1
 #define Pmax 1
 #define Pmin rc
+#define Vmax (1-rc)*1
+#define Vmin -Vmax
 #define c1 0.8
 #define c2 0.8
-#define w 0.7
-#define iteration 30
+//#define w 0.7
+#define iteration 100
 
 using namespace std;
 
@@ -45,7 +45,9 @@ double fitness[iteration];  //  用来记录每一轮的最佳适应值
 double r[dim];
 int r2[point_num][point_num];    //  r2[i][j]表示的是i与j两点之间的距离
 bool visited[point_num];
-int count1 = 0;
+int cur_iteration;
+
+double w = 0.9;
 
 void DFS(int a)
 {
@@ -58,7 +60,6 @@ void DFS(int a)
             DFS(i);
     }
 }
-
 bool is_connected()
 {
     memset(visited, false, sizeof(visited));
@@ -67,7 +68,6 @@ bool is_connected()
         return true;
     return false;
 }
-
 double MCS(const double *r, int simulation_replication) //  输入每条边的稳定性和蒙特卡洛的迭代次数，输出整个结构的稳定性
 {
     int SUCCESS = 0;
@@ -110,12 +110,10 @@ double MCS(const double *r, int simulation_replication) //  输入每条边的稳定性和
     }
     return (double)SUCCESS/simulation_replication;
 }
-
 double cost_function(double a, double b, double c)
 {
     return a-b*log(1-c);
 }
-
 double cost_sum(const double *r)  //  输入每条边的稳定性，输出总的cost
 {
     double tot = 0;
@@ -126,7 +124,6 @@ double cost_sum(const double *r)  //  输入每条边的稳定性，输出总的cost
         tot *= pow((double)Rc/Rr, Lambda);
     return tot;
 }
-
 /*void heuristic()    //  用启发式方法产生第一个粒子
 {
     for(int i = 0; i < dim; i++)
@@ -188,9 +185,11 @@ double cost_sum(const double *r)  //  输入每条边的稳定性，输出总的cost
     pbest_value[0] = p_value[0];
 }*/
 
+
 void init()
 {
     //heuristic();
+    cur_iteration = 0;
     for(int i = 0; i < particle_num; i++)
     {
         for(int j = 0; j < dim; j++)
@@ -213,7 +212,7 @@ void init()
 				gbest[j] = pbest[i][j];
 		}
 	}
-	fitness[count1++] = gbest_value;
+	fitness[cur_iteration++] = gbest_value;
 }
 
 void renew_partical()
@@ -236,6 +235,7 @@ void renew_partical()
 		}
 		p_value[i] = cost_sum(p[i]);
 	}
+	w -= (0.9 - 0.4) / iteration;
 }
 
 void renew_fitness()
@@ -255,7 +255,7 @@ void renew_fitness()
                gbest[j]=pbest[i][j];
         }
 	}
-	fitness[count1++] = gbest_value;
+	fitness[cur_iteration++] = gbest_value;
 }
 
 void output()

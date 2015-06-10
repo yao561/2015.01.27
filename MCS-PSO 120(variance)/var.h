@@ -1,0 +1,19 @@
+#ifndef VAR_H_INCLUDED
+#define VAR_H_INCLUDED
+
+#include <cmath>
+double cal_var(double *a, int n)
+{
+    double mean, tot = 0;
+    for(int i = 0; i < n; i++)
+        tot += a[i];
+    mean = tot / n;
+
+    double tot2 = 0;
+    for(int i = 0; i < n; i++)
+        tot2 += ((a[i] - mean) * (a[i] - mean));
+
+    return sqrt(tot2/n);
+}
+
+#endif // VAR_H_INCLUDED

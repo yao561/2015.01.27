@@ -1,0 +1,21 @@
+# depslib dependency file v1.0
+1429171546 source:c:\users\gs\documents\github\2015.01.27\mcs-pso(variance)\stat.cpp
+	"stat.h"
+	<cmath>
+
+1429022417 c:\users\gs\documents\github\2015.01.27\mcs-pso(variance)\stat.h
+
+1430140002 source:c:\users\gs\documents\github\2015.01.27\mcs-pso(variance)\main.cpp
+	<iostream>
+	<ctime>
+	<cstdlib>
+	<cstdio>
+	<algorithm>
+	<cstring>
+	<cmath>
+	<fstream>
+	"var.h"
+
+1430104208 c:\users\gs\documents\github\2015.01.27\mcs-pso(variance)\var.h
+	<cmath>
+

@@ -132,7 +132,6 @@ void init()
     {
         for(int j = 0; j < dim; j++)
 		{
-
 			p[i][j] = Pmin + (Pmax - Pmin) * 1.0 * rand() / RAND_MAX;
 			pbest[i][j] = p[i][j];
 			v[i][j] = Vmin + (Vmax - Vmin) * 1.0 * rand() / RAND_MAX;

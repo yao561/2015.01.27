@@ -10,6 +10,7 @@
 #define xmin -100
 #define CR 0.3
 #define F 0.5
+#define interation 1000
 
 using namespace std;
 
@@ -18,7 +19,7 @@ double x[Np][D];
 double v[Np][D];
 double u[Np][D];
 
-int count1 = 0;
+int cur_interation;
 
 double fun1(double * Vect)
 {
@@ -31,62 +32,60 @@ double fun1(double * Vect)
 
 void init()
 {
+    cur_interation = 0;
     for(int i = 0; i < Np; i++)
         for(int j = 0; j < D; j++)
             x[i][j] = xmin + (xmax - xmin) * 1.0 * rand() / RAND_MAX;
-    double best = 10e20;
+    double best = 1e20;
     for(int i = 0; i < Np; i++)
     {
         if(fun1(x[i]) < best)
             best = fun1(x[i]);
     }
-    printf("%d\t%g\n", ++count1, best);
+    printf("%d\t%g\n", ++cur_interation, best);
 
 }
 
-void process()
+void main_loop()
 {
     for(int i = 0; i < Np; i++)
     {
         int r1, r2, r3;
         do
         {
-        r1 = rand() % Np;
+        r1 = rand() * Np / RAND_MAX;
         } while(r1==i);
         do
         {
-        r2 = rand() % Np;
+        r2 = rand() * Np / RAND_MAX;
         } while( r2==i || r2==r1);
         do
         {
-        r3 = rand() % Np;
+        r3 = rand() * Np / RAND_MAX;
         } while( r3==i || r3==r1 || r3==r2 );
 
+        int J = rand() * D / RAND_MAX;
         for(int j = 0; j < D; j++)
         {
-            v[i][j] = x[r1][j] + F * (x[r2][j] - x[r3][j]);
-            if(v[i][j] > xmax)
-                v[i][j] = 2 * xmax - v[i][j];
-            if(v[i][j] < xmin)
-                v[i][j] = 2 * xmin - v[i][j];
-
-            if(1.0*rand()/RAND_MAX<=CR || j == rand()%(D+1))
-                u[i][j] = v[i][j];
+            if( 1.0*rand()/RAND_MAX<=CR || j==J )
+            {
+                u[i][j] = x[r1][j] + F * (x[r2][j] - x[r3][j]);
+                if(u[i][j] > xmax)
+                    u[i][j] = xmax;
+                else if(u[i][j] < xmin)
+                    u[i][j] = xmin;
+            }
             else
                 u[i][j] = x[i][j];
+            J = (J + 1) % D;
         }
-    }
-}
 
-void choice()
-{
-    for(int i = 0; i < Np; i++)
-    {
-        if(fun1(u[i]) < fun1(x[i]))
-            for(int j = 0; j < D; j++)
-            {
+
+
+        double score = fun1(u[i]);
+        if(score <= fun1(x[i]))
+            for(int j = 0; j <D; j++)
                 x[i][j] = u[i][j];
-            }
     }
     double best = 10e20;
     for(int i = 0; i < Np; i++)
@@ -94,20 +93,16 @@ void choice()
         if(fun1(x[i]) < best)
             best = fun1(x[i]);
     }
-    printf("%d\t%g\n", ++count1, best);
+    printf("%d\t%g\n", ++cur_interation, best);
 }
-
-
-
 
 int main()
 {
     srand(time(NULL));
     init();
-    for(int i = 1; i < 100; i++)
+    for(int i = 1; i < interation; i++)
     {
-        process();
-        choice();
+        main_loop();
     }
     return 0;
 }
