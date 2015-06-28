@@ -25,7 +25,7 @@ int main() {
 	ofstream out;
 
 	//这里改输出文件的名字。
-	out.open("j301_1.txt", ofstream::out);
+	out.open("j1201_1.txt", ofstream::out);
 	for (int i = 1; i <= network_size; i++) {
 		for (int j = 1; j < network_size; j++) {
 			out << matrix[i][j] << " ";
@@ -34,5 +34,16 @@ int main() {
 	}
 	out.close();
 
+    out.open("gephi.txt", ofstream::out);
+    out << "Source,Target\n";
+	for (int i = 1; i <= network_size; i++)
+    {
+		for (int j = 1; j <= network_size; j++)
+        {
+            if(matrix[i][j])
+                out << i << "," << j << endl;
+		}
+	}
+	out.close();
 	return 0;
 }
